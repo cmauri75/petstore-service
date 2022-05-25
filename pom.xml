@@ -1,0 +1,153 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.company.ms</groupId>
+    <artifactId>petstore-service</artifactId>
+    <packaging>jar</packaging>
+    <name>Petstore Service</name>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>net.company.ms</groupId>
+        <artifactId>master-pom</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <properties>
+        <basePackage>${groupId}.petstoreservice</basePackage>
+        <sonar.projectKey>petstore_XXXXXXXXXXXXXXXX</sonar.projectKey>
+        <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
+    </properties>
+
+    <scm>
+        <connection>scm:git:ssh://git@github.com:cmauri75/${project.artifactId}.git</connection>
+        <url>https://github.com/cmauri75/${project.artifactId}</url>
+        <developerConnection>scm:git:ssh://git@github.com:cmauri75/${project.artifactId}.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <build>
+        <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>4.3.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/petstore.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <configOptions>
+                                <sourceFolder>src/main/java</sourceFolder>
+
+                                <title>Sample petstore generation</title>
+                                <developerOrganization>R-BC Office</developerOrganization>
+                                <developerOrganizationUrl>cesaremauri.zil</developerOrganizationUrl>
+
+                                <groupId>net.company.ms</groupId>
+                                <artifactId>petstore-service</artifactId>
+                                <artifactVersion>1.0.0</artifactVersion>
+                                <artifactDescription>petstore-service</artifactDescription>
+
+                                <basePackage>${basePackage}</basePackage>
+                                <modelPackage>${basePackage}.codegen.model</modelPackage>
+                                <apiPackage>${basePackage}.codegen.api</apiPackage>
+                                <invokerPackage>${basePackage}.codegen.invoker</invokerPackage>
+                                <configPackage>${basePackage}.codegen.appConfig</configPackage>
+
+                                <java8>true</java8>
+                                <serializableModel>true</serializableModel>
+                                <fullJavaUtil>true</fullJavaUtil>
+                                <delegatePattern>true</delegatePattern>
+                                <interfaceOnly>false</interfaceOnly>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>true</performBeanValidation>
+                                <dateLibrary>java8</dateLibrary>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--SpringFox dependencies -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.22</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <!-- JUST FOR EXAMPLE PURPOSE, usually used only in test or maybe none if using testcontaines -->
+            <!--<scope>test</scope> -->
+        </dependency>
+
+        <!-- Bean Validation API support -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

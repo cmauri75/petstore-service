@@ -1,0 +1,73 @@
+image: maven:3.6.3-jdk-11
+
+cache:
+  paths:
+    - .m2/repository
+
+variables:
+  NEXUS_REGISTRY: http://Nexus-ip
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+stages:
+  - prepare
+  - check
+  - package
+  - dockerize
+  - publishJar
+
+show-var-prepare:
+  stage: prepare
+  script:
+    - export
+    - echo $NEXUS_REGISTRY
+
+sonarqube-check:
+  stage: check
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    GIT_DEPTH: "0"
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  before_script:
+    - cp -f cicd/settings.xml  $HOME/.m2/settings.xml
+  script:
+    - mvn clean verify sonar:sonar
+  allow_failure: true
+  only:
+    - develop
+
+#Create package on local machine and run tests
+packageJar:
+  stage: package
+  before_script:
+    - cp -f cicd/settings.xml  $HOME/.m2/settings.xml
+  script:
+    - echo "Building package"
+    - mvn clean package
+  only:
+    - develop
+
+#Upload artifact on nexus
+deployJar:
+  stage: publishJar
+  before_script:
+    - cp -f cicd/settings.xml  $HOME/.m2/settings.xml
+  script:
+    - echo "Building package"
+    - mvn deploy -DskipTests
+  only:
+    - release
+
+#Upload artifact on nexus
+createDockerImageAndPublish:
+  stage: dockerize
+  before_script:
+    - cp -f cicd/settings.xml  $HOME/.m2/settings.xml
+  script:
+    - echo "JIB to docker"
+    - mvn compile jib:build -DsendCredentialsOverHttp=true -Djib.httpTimeout=0
+  only:
+    - release
+
